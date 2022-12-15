@@ -88,7 +88,7 @@ function setup() {
   sel.option('pattern');
   sel.option('leafs');
   sel.option('logos');
-  sel.selected('pattern');
+  sel.selected('imperfect circles');
   sel.changed(changeType);
   sel.style("font-family", "Bodoni");
   sel.style("font-size", "16px");
@@ -105,6 +105,7 @@ function setup() {
   textBox.value(mouseScale);
   button = createButton('Change scale');
   button.position(textBox.x + textBox.width+10, textBox.y);
+  button.style("font-family", "Bodoni");
   // button.mousePressed(updateValue);
   
 
