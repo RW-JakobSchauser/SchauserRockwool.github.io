@@ -145,12 +145,12 @@ function make_voronoi(N){
   
   function make_slashes(N){
     reset();
-
+    strokeWeight(3);
 
     if(bgitem == "black"){
-      stroke(255);
+      stroke(200);
     } else {
-      stroke(0);
+      stroke(100);
     }
     for(var i = 0; i <= N; i++){
       for(var ii = 0; ii <= N; ii++){
@@ -383,6 +383,178 @@ function make_better_triangles(N){
 
 }
 
+
+function rndtile(N,NN, _random = 4){
+
+  let r = w/N
+  for(var i = 0; i < N+1; i++){
+    for(var ii = 0; ii < 2*N; ii++){
+      mktile(i*r, ii*r, r, _random);
+    }
+  }
+  
+}
+
+function mktile(x, y, r, _random){
+  strokeWeight(1);
+  stroke(100);
+  // square(x, y, r)
+  noFill();
+  strokeWeight(3);
+  let d = 4;
+
+  let kk = 6;
+
+
+  let i = floor(random(_random));
+  // i = 11;
+  if(i == 0){
+    arc(x, y, r, r, 0, PI/2);
+    arc(x + r, y + r, r, r, PI, 3*PI/2);
+  } else if(i == 1) {
+    arc(x + r, y, r, r, PI/2, PI);
+    arc(x, y + r, r, r, 3*PI/2, 2*PI);  
+  } else if(i == 2) {
+    line(line(x + r/2, y, x + r/2, y + r));
+
+    line(line(x, y + r/2, x + r/2 - r/d, y + r/2));
+    line(line(x + r/2 + r/d, y + r/2, x + r, y + r/2));
+  } else if(i == 3) {
+    line(line(x + r/2, y, x + r/2, y + r/2 - r/d));
+    line(line(x + r/2, y + r/2 + r/d, x + r/2, y + r));
+
+    line(line(x, y + r/2, x + r, y + r/2));
+  } else if(i == 4) {
+    arc(x + r, y, r, r, PI/2, PI);
+    arc(x, y + r, r, r, 3*PI/2, 2*PI);  
+
+    circle(x + r/2, y + r/2, r/4)
+  } else if(i == 5) {
+    arc(x + r, y, r, r, PI/2, PI);
+    arc(x, y + r, r, r, 3*PI/2, 2*PI);  
+
+    circle(x + r/2, y + r/2, r/4)
+  } else if(i == 6) {
+    line(line(x + r/2, y, x + r/2, y + r/2 - r/d));
+    line(line(x + r/2, y + r/2 + r/d, x + r/2, y + r));
+    
+    line(line(x, y + r/2, x + r/2 - r/d, y + r/2));
+    line(line(x + r/2 + r/d, y + r/2, x + r, y + r/2));
+    
+    circle(x + r/2, y + r/2, r/4)
+  } else if(i == 7) {
+    for(var k = 0; k < kk; k++){
+      let xx = x + (k)/(kk)*r;
+      line(line(xx, y, xx, y + r));
+    }
+    
+  } else if(i == 8) {
+    for(var k = 0; k < kk; k++){
+      let yy = y + (k)/(kk)*r;
+      line(line(x, yy, x + r, yy));
+    }
+    
+  } else if(i == 9) {
+    for(var k = 0; k < kk; k++){
+      let yy = y + (k+1)/(kk)*r;
+      let xx = x + (k+1)/(kk)*r;
+      line(line(xx, y, xx, yy));
+      line(line(x, yy, xx, yy));
+    }
+  } else if(i == 10) {
+    for(var k = 0; k < kk; k++){
+      let yy = y + r - (k+1)/(kk)*r;
+      let xx = x + (k+1)/(kk)*r;
+      line(line(xx, yy, xx, y + r));
+      line(line(x, yy, xx, yy));
+    }
+  }  else if(i == 11) {
+    for(var k = 0; k < kk; k++){
+      let yy = y + (k+1)/(kk)*r;
+      let xx = x + r -(k+1)/(kk)*r;
+      line(line(xx, yy, xx, y));
+      line(line(xx, yy, x+r, yy));
+    }
+  } else if(i == 12) {
+    for(var k = 0; k < kk; k++){
+      let yy = y + r - (k+1)/(kk)*r;
+      let xx = x + r - (k+1)/(kk)*r;
+      line(line(xx, yy, xx, y + r));
+      line(line(xx, yy, x+r, yy));
+    }
+  }
+ 
+}
+
+function make_walktiles(N, NN){
+  N = 20;
+  stroke(0);
+  fill(0);
+  strokeWeight(1);
+  var poss = new Array(N);
+  for (var i = 0; i < N; i++) {
+    poss[i] = new Array(N);
+    for (var ii = 0; ii < N; ii++) {
+      poss[i][ii] = [0,0];
+    }
+  }
+  
+  var rad = w/N;
+
+  var maxnum = 0;
+
+
+  let N_runs = 4;
+  for(var i = 0; i < N_runs; i++){
+    let x = floor(random(0,N));
+    let y = floor(random(0,N));
+    poss[x][y] = 1;
+    let number = 2;
+    all_ways = [[0,1], [0,-1], [1,0], [-1,0]];
+    ways = all_ways;
+    let r = [1,0];
+
+
+    while(true){
+      if(ways.length == 0){
+        break;
+      }
+      r = random([r,random(ways)]);
+      x += r[0];
+      y += r[1];
+      if(x < 0 || x >= N || y < 0 || y >= N){
+        break;
+      }
+      if(poss[x][y][0] > 0){
+        x -= r[0];
+        y -= r[1];
+        ways = ways.filter(function(value, index, arr){
+          return value != r;
+        });
+
+        continue;
+      }
+      ways = all_ways;
+      poss[x][y] = [number,i];
+      number += 1;
+    }
+    if (number > maxnum) {
+      maxnum = number;
+    }
+  }
+
+  for(var i = 0; i < N; i++){
+    for(var ii = 0; ii < N; ii++){
+      if(poss[i][ii][0]>0){
+        fill(poss[i][ii][1]*255/N_runs);
+        circle(i*rad + rad/2, ii*rad + rad/2, rad*poss[i][ii][0]/maxnum);
+      }
+    }
+  }
+  console.log(poss); 
+  console.log(maxnum);
+}
+
 function art_deco(N, NN){
   reset();
 
@@ -420,21 +592,30 @@ function make_imperfect_circles(N, N_rounds){
   }
   noFill();
   for(var iii = 0; iii < N; iii++){
-  for(var ii = 0; ii < N; ii++){
-  let xx = w/N*ii + w/N/2;
-  let yy = w/N*iii + w/N/2;
-  let start = 0;
-  let stop = start + random(PI/8,PI);
-  // let rnd2 = random(0.1,1.8);
-  let rnd_size = random(1 - randomness*0.9,1 + randomness*0.9);
-  for(var i = 0; i < N_rounds; i++){
-    // let rnd = random(0.9,1.1);
-    let rnd = random(1 - randomness*0.2,1 + randomness*0.2);
-    arc(xx, yy, w/N*rnd/2*rnd_size, w/N*rnd/2*rnd_size, start, stop, OPEN);
-    start = stop;
-    stop = start + random(PI/8,PI);
-  }
-}
+    for(var ii = 0; ii < N; ii++){
+      N_rounds = 3;
+      // find distance from edge
+      let dx = min(iii, N-iii);
+      let dy = min(ii, N-ii);
+      _x = map(dx, 0, N/2, 5, 1);
+      _y = map(dy, 0, N/2, 5, 1);
+      N_rounds = max(_x, _y);
+
+
+      let xx = w/N*ii + w/N/2;
+      let yy = w/N*iii + w/N/2;
+      let start = 0;
+      let stop = start + random(PI/8,PI);
+      // let rnd2 = random(0.1,1.8);
+      let rnd_size = random(1 - randomness*0.9,1 + randomness*0.9);
+      for(var i = 0; i < N_rounds; i++){
+        // let rnd = random(0.9,1.1);
+        let rnd = random(1 - randomness*0.2,1 + randomness*0.2);
+        arc(xx, yy, w/N*rnd/2*rnd_size, w/N*rnd/2*rnd_size, start, stop, OPEN);
+        start = stop;
+        stop = start + random(PI/8,PI);
+      }
+    }
   }
 }
 
@@ -472,22 +653,107 @@ function make_images(N, type){
 function make_pattern(a,b){
   reset();
   rectMode(CENTER);
-  
   // rect(0, 0, w/2, w/2);
   const d = width * 0.8;
   // make 10 random circles 
-  for(var i = 0; i < 4; i++){
-  for(var ii = 0; ii < 4; ii++){
-    let x = w/4*ii + w/4/2;
-    let y = w/4*i + w/4/2;
-    let r = w/4+1;
-    pattern(randPattern(d));
 
-    rectPattern(x, y, r, r);
+  let NN = 1;
+  for(var i = 0; i < NN; i++){
+    for(var ii = 0; ii < NN; ii++){
+      let x = w/NN*ii + w/NN/2;
+      let y = w/NN*i + w/NN/2;
+      let r = w/NN+1;
+      pattern(randPattern(d));
+
+      rectPattern(x, y, r, r);
+    }
+  }
+  // rectPattern(0, 0, w/2, w/2);'
+  
+}
+
+function make_cool_rocks(N){
+  // reset();
+  for(var i = 0; i < N; i++){
+    square_rock(random(100,w-100), random(100,w-100));
   }
 }
-  // rectPattern(0, 0, w/2, w/2);
+
+function square_rock(x,y){
+  stroke(0);
+  strokeWeight(0);
+  let size = random(20, 60);
+  fill(255)
+  let off = random(PI);
+  let tri = [];
+  for(var i = 0; i < 3; i++){
+    let a = i*2*PI/3 + off;
+    fill(200+ sin(a)*25);
+    // tri.push([x + sin(a)*size, y + cos(a)*size]);
+    beginShape();
+    vertex(x, y);
+    vertex(x + sin(a)*size, y + cos(a)*size);
+    if(i <100){
+      vertex(x + sin(a + PI/3)*size, y + cos(a + PI/3)*size);
+    }
+    // vertex(x + sin(a + *2PI/3)*size, y + cos(a + PI/3)*size);
+    vertex(x + sin(a + 2*PI/3)*size, y + cos(a + 2*PI/3)*size);
+    vertex(x, y);
+    // vertex(x + sin(a)*size + cos(a)*size, y + cos(a)*size);
+    endShape();
+  }
+  console.log("jey");
+
 }
+
+function make_waves(N, NN){
+  reset();
+  stroke(0);
+  fill(0);
+  beginShape();
+  vertex(0)
+  let XN = w/3;
+  let rnd = random(100);
+  let NNN = 40;
+  for(var ii = 0; ii < NNN; ii++){
+    
+    for(var i = 0; i < XN; i++){
+      y = noise((i/XN + rnd+ ii)*3)*w/4 + w/4;
+      // line(i*w/XN + ii, y, i*w/XN, w);
+      fill(255 -ii*255/NNN);
+      stroke(255 - ii*255/NNN);
+      circle(i*w/XN, y + ii*8, 3);
+
+    }
+  }
+}
+
+function make_eyes(N, NN){
+  reset();
+  
+  for(var i = 0; i < N; i++){
+    for(var ii = 0; ii < N; ii++){
+      let r = random(w/N/2) + w/N/2;
+
+      let x = w/N*ii + w/N/2 + random()*(w/N-r)/2;
+      let y = w/N*i + w/N/2;
+
+      let rnd = random(-r/8, r/8);
+      stroke(0);
+      fill(255);
+      circle(x,y, r);
+      fill(random(100,200));
+      noStroke();
+      circle(x+rnd,y+rnd, r/2);
+      fill(0);
+      circle(x+rnd,y+rnd, r/4);
+      
+    }
+  }
+}
+
+
+  
 
 function make_noise_squares(N, noiseoff){
   reset();
@@ -506,13 +772,13 @@ function make_noise_squares(N, noiseoff){
       fill(c);
       rect(x, y, s+1, s+1);
 
-      c = noise(x/scale*1.5 + noiseoff, y/scale*1.5 + noiseoff)*100+100;
+      c = noise(x/scale*1.05 + noiseoff, y/scale*1.05 + noiseoff)*100+100;
       fill(c);
       rect(x, y, s/2, s/2);
 
-      c = noise(x/scale*2 + noiseoff, y/scale*2 + noiseoff)*100+100;
-      fill(c);
-      rect(x , y, s/4, s/4);
+      // c = noise(x/scale*2 + noiseoff, y/scale*2 + noiseoff)*100+100;
+      // fill(c);
+      // rect(x , y, s/4, s/4);
     }
   }
 }

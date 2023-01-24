@@ -8,8 +8,9 @@
 
 let DPI = 60;
 let inch_per_mm = 0.0393701;
-let image_size_mm = 290;
+let image_size_mm = 210;
 let w = DPI*inch_per_mm*image_size_mm;
+
 let radius = 10;
 let N = 30*3;
 
@@ -55,6 +56,7 @@ function preload(){
 
 function setup() {
   createCanvas(w, w);
+  noSmooth()
   button = createButton("Save image!");
   button.mouseClicked(moveButton);
   button.size(200,50);
@@ -88,10 +90,21 @@ function setup() {
   sel.option('pattern');
   sel.option('leafs');
   sel.option('logos');
+  sel.option('tiles');
+  sel.option('tiles with circles');
+  sel.option('walktiles');
+  sel.option('eyes');
+  sel.option('cool_rocks');
+  sel.option('noise squares');
   sel.selected('imperfect circles');
   sel.changed(changeType);
   sel.style("font-family", "Bodoni");
   sel.style("font-size", "16px");
+
+  // sel = createSelect();
+  // sel.position(w, 150);
+  // sel.size(200, 25);
+  // sel.option('imperfect circles');
 
   randomness_slider = createSlider(0, 1, 0.5, 0.01);
   randomness_slider.position(w, 200);
@@ -105,7 +118,6 @@ function setup() {
   textBox.value(mouseScale);
   button = createButton('Change scale');
   button.position(textBox.x + textBox.width+10, textBox.y);
-  button.style("font-family", "Bodoni");
   // button.mousePressed(updateValue);
   
 
@@ -141,8 +153,8 @@ function update(){
     let c2 = color(150);
     let c1 = color(255);
     for(let y=0; y<w; y++){
-      let n = map(y,0,w,0,1);
-      let newc = lerpColor(c1,c2,n);
+      // let n = map(y,0,w,0,1);
+      let newc = lerpColor(c1,c2, y/w);
       stroke(newc);
       line(0,y,width, y);
     }
@@ -171,7 +183,20 @@ function update(){
     make_images(mouse[0], "logos");
   } else if(item == "pattern"){
     make_pattern(mouse[0], mouse[1]);
-    // make_noise_squares(mouse[0], mouse[1]);
+  } else if(item == "tiles"){
+    rndtile(mouse[0], mouse[1], 4);
+  } else if(item == "tiles with circles"){
+    rndtile(mouse[0], mouse[1], 5);
+  } else if(item == "waves"){
+    make_waves(mouse[0], mouse[1]);
+  } else if(item == "eyes"){
+    make_eyes(mouse[0], mouse[1]);
+  } else if(item == "walktiles"){
+    make_walktiles(mouse[0], mouse[1]);
+  } else if(item == "cool_rocks"){
+    make_cool_rocks(mouse[0]);
+  }  else if(item == "noise squares"){
+    make_noise_squares(mouse[0], mouse[1]);
   }
   // make_circs(w/70 * mouseX/w);
   // make_slashes(mouse[0]*10+1);
@@ -196,6 +221,7 @@ function draw() {
     if(should_update){
       update();
     }
+    should_update = false;
     // print("update");
   }
   if(mouseIsPressed ){
@@ -208,6 +234,7 @@ function draw() {
 
 function mousePressed() {
   if (mouseX < w){
-    should_update = !should_update;
+    // should_update = !should_update;
+    should_update = true;
   }
 }
